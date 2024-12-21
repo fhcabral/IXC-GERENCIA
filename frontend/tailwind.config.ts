@@ -1,4 +1,5 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from 'tailwindcss'
+
 export default {
   content: [
     "./components/**/*.{js,vue,ts}",
@@ -22,11 +23,11 @@ export default {
           200: "#F9F9F9",
         },
         custom: {
-          50: '#F5F7F4',   // Mais claro
-          100: '#4B5945',  // Mais escuro
+          50: '#F5F7F4',   
+          100: '#4B5945',  
           200: '#66785F',
           300: '#91AC8F',
-          400: '#B2C9AD'   // Mais claro
+          400: '#B2C9AD'   
         }
       },
       fontFamily: {
@@ -35,4 +36,4 @@ export default {
     },
   },
   plugins: [],
-}
+} satisfies Config
