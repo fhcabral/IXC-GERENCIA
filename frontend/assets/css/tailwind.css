@@ -14,3 +14,16 @@ body {
 ::-webkit-scrollbar-thumb {
   @apply bg-custom-300 rounded-full;
 }
+
+.m-table {
+  @apply rounded-[15px] overflow-hidden;
+}
+
+.m-table thead th {
+  @apply bg-[#4B5945] text-white !important;
+}
+
+
+.m-table, th {
+  @apply border border-gray-500;
+}
