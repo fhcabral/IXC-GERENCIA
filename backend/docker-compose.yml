@@ -1,0 +1,40 @@
+volumes:
+  mongo_data:
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  finance-mongo:
+    image: mongo:latest
+    container_name: mongo_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+      MONGO_INITDB_DATABASE: MyDatabase
+    networks:
+      - app_network
+
+  api-finance-graphql:
+    container_name: 'api_finance_graphql'
+    build:
+      context: './'
+      dockerfile: ./docker/production.dockerfile
+    environment:
+      - api_version=1.0.0
+      - URL_MONGO=${URL_MONGO}
+    expose:
+      - 3005
+    ports:
+      - '3005:3005'
+      - '4000:4000'
+    networks:
+      - app_network
+    depends_on:
+      - finance-mongo
+    command: ["sh", "-c", "until nc -z finance-mongo 27017; do echo 'Waiting for MongoDB...'; sleep 2; done; exec npm run start:build"]
