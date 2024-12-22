@@ -1,0 +1,6 @@
+
+export enum EntityDB {
+    USER = 'User',
+    SYSTEMUSERPROFILES = 'SYSTEMUSERPROFILES',
+    TRANSACTION = 'TRANSACTION'
+}

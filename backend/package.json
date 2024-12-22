@@ -1,0 +1,35 @@
+{
+    "name": "api-ixc-gerencia",
+    "version": "1.0.0",
+    "main": "server.js",
+    "author": "Fhellipe Cabral",
+    "license": "",
+    "scripts": {
+      "dev": "ts-node-dev --respawn --transpile-only  src/infra/api/server/simple-server.ts",
+      "build": "tsc",
+      "start:build": " node  dist/infra/api/server/simple-server.js"
+    },
+    "dependencies": {
+      "@apollo/server": "^4.9.5",
+      "@types/lodash": "^4.14.201",
+      "apollo-server": "^3.12.1",
+      "dotenv": "^16.3.1",
+      "graphql": "^16.8.1",
+      "graphql-scalars": "^1.22.2",
+      "lodash": "^4.17.21",
+      "mongoose": "^8.9.2",
+      "pg": "^8.11.3",
+      "reflect-metadata": "^0.1.13",
+      "type-graphql": "2.0.0-beta.3",
+      "typedi": "^0.10.0"
+    },
+    "devDependencies": {
+      "@types/graphql": "^14.5.0",
+      "@types/pg": "^8.10.9",
+      "@types/typescript": "^2.0.0",
+      "colors": "^1.4.0",
+      "ts-node-dev": "^2.0.0",
+      "typescript": "^5.2.2"
+    }
+  }
+  
