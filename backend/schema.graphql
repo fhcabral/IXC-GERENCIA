@@ -11,6 +11,7 @@ type Mutation {
 
 type Query {
   findByUser(userID: String!): [Transaction!]!
+  getUser(surname: String!): [User!]!
   user(id: Float!): User!
 }
 

@@ -7,13 +7,15 @@ export class UserRepository {
 
   async findByProp(prop: string, value: string | number) {
     const filter: Record<string, unknown> = { [prop]: value };
+
+    console.log(filter)
          const transaction = await UserModel.find(filter);
-   
+        console.log(transaction);
          if (!transaction) {
            throw new Error(`Nenhum Usuario encontrado com ${prop} = ${value}.`);
          }
    
-         return transaction;
+         return transaction as unknown as User;
   }
 
   async create(data: Partial<User>){
