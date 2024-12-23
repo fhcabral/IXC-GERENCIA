@@ -66,36 +66,50 @@ Um sistema completo de gerenciamento financeiro desenvolvido com tecnologias mod
 ## Configuração e Execução
 
 ### **Branch**
-- Primeiramente, selecione a branch dev e realize o git clone em uma pasta de sua escolha no seu dispositivo:
-ex: git clone git@github.com:fhcabral/IXC-GERENCIA.git
+- Primeiramente, selecione a branch dev e realize o git clone em uma pasta de sua escolha no seu dispositivo exemplo: 
+```bash
+git clone git@github.com:fhcabral/IXC-GERENCIA.git
+```
 
 ### **Frontend**
 - 1.Navegue até o diretório frontend:
+```bash
 cd frontend
+```
 - 2.Instale as dependências:
+```bash
 npm install
 ou
 yarn install
+```
 - 3.Crie um arquivo .env na raiz do frontend:
+```bash
 NUX_API_BASE=localhost:4000
+```
 - 4.Inicie o servidor de desenvolvimento:
+```bash
 npm run dev
 ou
-yarn dev
+yarn run dev
+```
 
 ---
 
 ### **Backend**
-- 1.Crie um arquivo .env na raiz do projeto:
+- 1.Crie um arquivo .env na raiz do backend:
+```bash
 URL_MONGO=mongodb://admin:1234@finance-mongo:27017/MyDatabase?authSource=admin
-- 2.Inicialize o projeto com Docker Compose:
-docker-compose up
+```
 
+- 2.Inicialize o projeto com Docker Compose:
+```bash
+docker-compose up
+```
 ---
 
 ## Credenciais de Acesso
-**Usuário: ixc.software**
-**Senha: ixc@123**
+- **Usuário: ixc.software**
+- **Senha: ixc@123**
 
 ---
 
@@ -111,9 +125,12 @@ docker-compose up
 
 ## Testes
 **Frontend**
-npm run test
-ou
-yarn test
+
+```bash
+  npm run test
+  ou
+  yarn run test
+```
 
 ---
 
