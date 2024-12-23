@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-// Módulo Ativo
+import { ref } from 'vue';
 const activeModule = ref('transacoes')
 </script>
 

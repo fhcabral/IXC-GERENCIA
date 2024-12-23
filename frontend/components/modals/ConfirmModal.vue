@@ -24,12 +24,12 @@
             </span>
           </div>
 
-          <div class="summary-item">
+          <div class="summary-item" v-if="novaTransacao.descricao">
             <span class="label">Descrição:</span>
             <span>{{ novaTransacao.descricao }}</span>
           </div>
 
-          <div class="summary-item">
+          <div class="summary-item" v-if="novaTransacao.data">
             <span class="label">Data:</span>
             <span>{{ formatDate(novaTransacao.data) }}</span>
           </div>
@@ -59,8 +59,6 @@ defineProps<{
   novaTransacao: ITransaction
 }>()
 
-const emit = defineEmits(['confirm', 'close'])
-
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -79,19 +77,19 @@ const formatDate = (dateString: string) => {
 }
 
 .modal-container {
-  @apply bg-white rounded-lg w-[400px] max-w-[90%] shadow-md;
+  @apply bg-white dark:bg-gray-800 rounded-lg w-[400px] max-w-[90%] shadow-md;
 }
 
 .modal-header {
-  @apply p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg flex justify-center items-center;
+  @apply p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-t-lg flex justify-center items-center;
 }
 
 .modal-header h2 {
-  @apply m-0 text-xl text-gray-700 text-center w-full;
+  @apply m-0 text-xl text-gray-700 dark:text-white text-center w-full;
 }
 
 .transaction-summary {
-  @apply bg-gray-100 rounded-md p-4 mb-4;
+  @apply bg-gray-100 dark:bg-gray-700 rounded-md p-4 mb-4;
 }
 
 .summary-item {
@@ -99,7 +97,7 @@ const formatDate = (dateString: string) => {
 }
 
 .label {
-  @apply font-medium text-gray-700;
+  @apply font-medium text-gray-700 dark:text-gray-300;
 }
 
 .type-badge {
@@ -107,23 +105,23 @@ const formatDate = (dateString: string) => {
 }
 
 .type-badge.success {
-  @apply bg-green-500/10 text-green-600;
+  @apply bg-green-500/10 text-green-600 dark:bg-green-500/20 dark:text-green-400;
 }
 
 .type-badge.danger {
-  @apply bg-red-500/10 text-red-600;
+  @apply bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400;
 }
 
 .value {
-  @apply font-bold text-gray-700;
+  @apply font-bold text-gray-700 dark:text-white;
 }
 
 .confirm-text {
-  @apply text-center text-gray-600 mb-4;
+  @apply text-center text-gray-600 dark:text-gray-300 mb-4;
 }
 
 .modal-actions {
-  @apply flex justify-between p-4 border-t border-gray-200;
+  @apply flex justify-between p-4 border-t border-gray-200 dark:border-gray-700;
 }
 
 .btn {
@@ -131,7 +129,7 @@ const formatDate = (dateString: string) => {
 }
 
 .btn-secondary {
-  @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+  @apply bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500;
 }
 
 .btn-primary {
