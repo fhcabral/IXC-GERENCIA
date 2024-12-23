@@ -10,6 +10,8 @@ import {
 import ErrorHandling from "../../../shared/exception/error.handler";
 import { CreateUserArg } from "./args-type/create-user.arg.type";
 import { ParamUserById } from "./args-type/findById.arg.type";
+import { GetUserArg } from "./args-type/get-user.arg.type";
+import { GetUserUseCase } from "../../../../use-case/user/getUser/get-user.use-case";
 
 @Service()
 @Resolver(User)
@@ -18,13 +20,30 @@ export class UserResolver implements IUserResolver {
   constructor(
     @Inject()
     private findByIdUserUsecase: FindByIdUserUsecase,
-    @Inject() private createUserUseCase: CreateUserUseCase
+    @Inject() private createUserUseCase: CreateUserUseCase,
+    @Inject()
+    private getUserUseCase: GetUserUseCase
   ) {}
 
   @Query((returns) => User)
   async user(@Args() { id }: ParamUserById) {
     try {
       const user = await this.findByIdUserUsecase.execute(id);
+      const notUser = !!head([user]);
+      if (!notUser) {
+        throw new Error("User not found");
+      }
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Query((returns) => [User])
+  async getUser(@Args() { surname }: GetUserArg) {
+    try {
+      const user = await this.getUserUseCase.execute({surname});
       const notUser = !!head([user]);
       if (!notUser) {
         throw new Error("User not found");

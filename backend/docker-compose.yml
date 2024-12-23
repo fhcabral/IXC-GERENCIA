@@ -1,5 +1,4 @@
-volumes:
-  mongo_data:
+version: '3.8'
 
 networks:
   app_network:
@@ -13,10 +12,18 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+      - ./seeds:/docker-entrypoint-initdb.d
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: 1234
       MONGO_INITDB_DATABASE: MyDatabase
+    entrypoint: >
+      sh -c "
+      mongod --fork --logpath /var/log/mongodb.log --dbpath /data/db &&
+      mongoimport --db MyDatabase --collection users --file /docker-entrypoint-initdb.d/users.json --jsonArray &&
+      mongod --shutdown &&
+      mongod --bind_ip_all
+      "
     networks:
       - app_network
 
@@ -38,3 +45,8 @@ services:
     depends_on:
       - finance-mongo
     command: ["sh", "-c", "until nc -z finance-mongo 27017; do echo 'Waiting for MongoDB...'; sleep 2; done; exec npm run start:build"]
+
+
+
+volumes:
+  mongo_data:
