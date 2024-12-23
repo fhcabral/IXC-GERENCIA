@@ -39,12 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import { useCustomToast } from '~/utils/toasts/toasts';
+import { useCustomToast } from '../../utils/toasts/toasts';
 import { ref, computed } from 'vue';
 import type { ITransaction } from '~/types';
 import ConfirmModal from '../modals/ConfirmModal.vue';
-import { useAuthStore } from '~/store/auth/login-store';
-import { useNuxtApp } from '#app';
+import { useAuthStore } from '../../store/auth/login-store';
+import { useNuxtApp } from 'nuxt/app'
 
 const { showWarnToast, showSuccessToast } = useCustomToast();
 const { $http } = useNuxtApp();
@@ -159,6 +159,16 @@ const formatarValor = (event: Event) => {
         currency: 'BRL'
     }).format(valorNumerico)
 }
+
+defineExpose({
+    adicionarTransacao,
+    validarTransacao,
+    valorFormatado,
+    novaTransacao,
+    transactionType,
+    showConfirmModal,
+    resetFormulario
+})
 
 </script>
 

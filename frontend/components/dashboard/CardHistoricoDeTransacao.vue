@@ -28,8 +28,9 @@
     </div>
 
     <MazTable size="lg" 
-    :headers="['Id', 'Descrição', 'Valor', 'Data', 'Ações']"
+    :headers="['ID', 'DESCRIÇÃO', 'VALOR', 'DATA', 'AÇÕES']"
     :translations="{noResults: 'Nenhum resultado encontrado :('}"
+    :loading="!transacoes.length"
     >
       <MazTableRow v-for="(transacao, index) in transacoesFiltradas" :key="index" class="custom-maz-table-row">
         <MazTableCell>
@@ -60,7 +61,7 @@ import MazTableRow from 'maz-ui/components/MazTableRow'
 import MazTableCell from 'maz-ui/components/MazTableCell'
 import MazBtn from 'maz-ui/components/MazBtn'
 import type { ITransaction } from '~/types';
-import { icon_trash } from '~/utils/icon/icons';
+import { icon_trash } from '../../utils/icon/icons';
 import { ref, computed } from 'vue';
 
 const props = defineProps<{
@@ -84,8 +85,10 @@ const formatCurrency = (valor: number, tipo?: string | null) => {
 
   return tipo === 'saida' ? `-${formattedValue}` : `+${formattedValue}`
 }
+
 const formatDate = (data: string): string => {
-  return new Date(data).toLocaleDateString('pt-BR')
+  const [ano, mes, dia] = data.split('-').map(Number)
+  return new Date(ano, mes - 1, dia).toLocaleDateString('pt-BR')
 }
 
 const transacoesFiltradas = computed(() => {
@@ -105,6 +108,14 @@ const transacoesFiltradas = computed(() => {
         return new Date(b.data).getTime() - new Date(a.data).getTime()
     }
   }) as ITransaction[]
+})
+
+defineExpose({
+  ordenacao,
+  transacoesFiltradas,
+  formatDate,
+  excluirTransacao,
+  formatCurrency
 })
 </script>
 
