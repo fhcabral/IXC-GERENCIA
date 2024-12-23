@@ -14,7 +14,7 @@
               <div class="input-icon">
                 <span v-html="icon_user(20, colorMode.preference === 'dark' ? '#91AC8F' : '#4B5945')"></span>
               </div>
-              <input type="text" v-model="values_reactive.username" placeholder="Digite seu usuário" required
+              <input type="text" v-model="values_reactive.surname" placeholder="Digite seu usuário"
                 class="login-input">
             </div>
 
@@ -22,7 +22,7 @@
               <div class="input-icon">
                 <span v-html="icon_key(20, colorMode.preference === 'dark' ? '#91AC8F' : '#4B5945')"></span>
               </div>
-              <input type="password" v-model="values_reactive.password" placeholder="Digite sua senha" required
+              <input type="password" v-model="values_reactive.password" placeholder="Digite sua senha"
                 class="login-input">
             </div>
 
@@ -38,42 +38,55 @@
 
 <script setup lang="ts">
 import { icon_user, icon_key } from "~/utils/icon/icons";
-import type { ILogin, ILoginResult } from '~/types/auth/login';
-//   import type { ILogin, ILoginResult } from "~/services/login/types";
-//   import { authStorage } from "~/store/auth/store";
-// import { createHash } from 'node:crypto';
+import { computed } from "vue";
+import { useColorMode } from "#build/imports";
+import { useRouter } from "vue-router";
+import { reactive } from "vue";
+import type { ILogin, ILoginValidation } from '~/types/auth/login.type';
+import { useCustomToast } from '~/utils/toasts/toasts';
+import { useAuthStore } from "~/store/auth/login-store";
+const { showErrorToast, showSuccessToast, showWarnToast } = useCustomToast();
 
-//   const storage = authStorage()
-const { $http } = useNuxtApp();
 const colorMode = useColorMode()
+const authStore = useAuthStore()
 
 
 const values_reactive = computed<ILogin>(() => {
   return reactive({
-    username: "",
+    surname: "",
     password: "",
   });
 });
 
 const login = async () => {
-  // const encoder = new TextEncoder();
-  // const data = encoder.encode(values_reactive.value.password);
+  if(!values_reactive.value.surname) {
+    showWarnToast('Usuário deve ser preenchido!')
+    return
+  }
+  else if (!values_reactive.value.password) {
+    showWarnToast('Senha deve ser preenchida!')
+    return
+  }
+  const encoder = new TextEncoder();
+  const data = encoder.encode(values_reactive.value.password);
 
-  // const hashBuffer = await crypto.subtle.digest('SHA-1', data);
-  // const hashArray = Array.from(new Uint8Array(hashBuffer));
-  // const hashedPassword = hashArray
-  //     .map(b => b.toString(16).padStart(2, '0'))
-  //     .join('');
+  const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashedPassword = hashArray
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
 
-  // const result = await $http.login.autentication({
-  //     username: values_reactive.value.username,
-  //     password: hashedPassword,
-  // }) as ILoginResult
-  useRouter().push('/Dashboard');
+  const request = await authStore.login({
+    surname: values_reactive.value.surname,
+      password: hashedPassword,
+  }) as ILoginValidation
 
-  // if (result) {
-  //     useRouter().push('/Dashboard');
-  // }
+  if (request.status) {
+    showSuccessToast(request.message)
+    useRouter().push('/Dashboard');
+  } else {
+    showErrorToast(request.message)
+  }
 };
 </script>
 

@@ -4,10 +4,6 @@
             Cadastro de transação
         </h2>
         <form @submit.prevent="openConfirmModal">
-            <div class="form-group">
-                <label>Descrição <span class="required">*</span></label>
-                <input v-model="novaTransacao.descricao" type="text" class="input-field">
-            </div>
             <div class="form-group flex flex-col">
                 <label>Tipo de Transação <span class="required">*</span></label>
                 <MazSelect v-model="transactionType" :color="transactionType === 'entrada' ? 'success' : 'danger'"
@@ -16,14 +12,21 @@
                         { label: 'Saída', value: 'saida' }
                     ]" placeholder="Selecione o tipo" class="custom-maz-select" />
             </div>
+            <div class="form-group w-[221px]">
+                <label class="block mb-1">
+                    Data <span class="required text-red-500">*</span>
+                </label>
+                <input v-model="novaTransacao.data" type="date" class="input-field w-full h-[47px]">
+            </div>
+            <div class="form-group">
+                <label>Descrição <span class="required">*</span></label>
+                <input placeholder="Digite aqui sua descrição" v-model="novaTransacao.descricao" type="text"
+                    class="input-field">
+            </div>
             <div class="form-group" v-if="transactionType">
                 <label>Valor <span class="required">*</span></label>
                 <input placeholder="R$ 0,00" v-model="valorFormatado" @input="formatarValor" type="text"
                     inputmode="numeric" class="input-field">
-            </div>
-            <div class="form-group">
-                <label>Data <span class="required">*</span></label>
-                <input v-model="novaTransacao.data" type="date" class="input-field">
             </div>
             <button type="submit" class="submit-button">
                 Adicionar Transação
@@ -37,9 +40,15 @@
 
 <script setup lang="ts">
 import { useCustomToast } from '~/utils/toasts/toasts';
-const { showWarnToast, showSuccessToast } = useCustomToast();
+import { ref, computed } from 'vue';
 import type { ITransaction } from '~/types';
 import ConfirmModal from '../modals/ConfirmModal.vue';
+import { useAuthStore } from '~/store/auth/login-store';
+import { useNuxtApp } from '#app';
+
+const { showWarnToast, showSuccessToast } = useCustomToast();
+const { $http } = useNuxtApp();
+const authStore = useAuthStore()
 
 const transactionType = ref()
 const valorFormatado = ref('')
@@ -50,7 +59,7 @@ const novaTransacao = ref<ITransaction>({
     valor: 0,
     data: '',
     tipo: null,
-    id: 0,
+    id: '',
 })
 
 const confirmTransation = ref(<ITransaction>({}));
@@ -67,13 +76,14 @@ const closeModal = () => {
     showConfirmModal.value = false
 }
 const openConfirmModal = () => {
+    const userId = authStore.getId() || ''
     if (!validarTransacao(novaTransacao.value)) {
         showWarnToast('Preencha todos os campos obrigatórios!')
         return false
     }
 
     confirmTransation.value = {
-        id: gerarId(),
+        id: userId,
         descricao: novaTransacao.value.descricao,
         valor: novaTransacao.value.valor,
         data: novaTransacao.value.data,
@@ -84,19 +94,17 @@ const openConfirmModal = () => {
     return true
 }
 
-const adicionarTransacao = (confirmation: boolean) => {
-    // Verifica se usuário confirmou
+const adicionarTransacao = async (confirmation: boolean) => {
     if (!confirmation) {
         showWarnToast('Operação cancelada!')
         showConfirmModal.value = false
         return
     }
 
-    // Adiciona transação
-    transacoes.value.push(confirmTransation.value)
+    const transactionId = await $http.transaction.createTransaction(confirmTransation.value);
+    transacoes.value.push(transactionId)
     showSuccessToast('Transação adicionada com sucesso!')
 
-    // Resetar formulário
     resetFormulario()
     showConfirmModal.value = false
 }
@@ -104,7 +112,7 @@ const adicionarTransacao = (confirmation: boolean) => {
 const resetFormulario = () => {
     valorFormatado.value = ''
     novaTransacao.value = {
-        id: 0,
+        id: '',
         descricao: '',
         valor: 0,
         data: '',
@@ -152,10 +160,6 @@ const formatarValor = (event: Event) => {
     }).format(valorNumerico)
 }
 
-const gerarId = () => {
-    return Math.floor(Math.random() * 1000000)
-}
-
 </script>
 
 <style scoped>
@@ -180,6 +184,7 @@ const gerarId = () => {
 .form-group {
     @apply mb-4;
 }
+
 
 .input-field {
     @apply w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-[#F0F4F8] dark:bg-darkTheme-200/50 focus:outline-none focus:ring-2 focus:ring-[#4B5945]/50 dark:focus:ring-[#91AC8F]/50 transition-all duration-300;

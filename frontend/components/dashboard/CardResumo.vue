@@ -28,13 +28,14 @@
 </template>
 
 <script setup lang="ts">
+import type { ITransaction } from '~/types';
+import { computed } from 'vue';
 const props = withDefaults(defineProps<{
     transacoes: ITransaction[]
 }>(), {
     transacoes: () => []
 })
 
-import type { ITransaction } from '~/types';
 const transacoes = computed(() => props.transacoes);
 
 const totalEntradas = computed(() =>
@@ -52,7 +53,7 @@ const totalSaidas = computed(() =>
 const saldoAtual = computed(() => {
     if (totalEntradas.value >= totalSaidas.value) {
         return totalEntradas.value - totalSaidas.value
-    } 
+    }
     return -(totalSaidas.value - totalEntradas.value)
 })
 

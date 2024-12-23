@@ -1,7 +1,6 @@
 <template>
   <div>
-    <!-- Botão de Tema no canto superior direito -->
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed bottom-4 left-4 z-50">
       <button 
         @click="toggleColorMode" 
         class="p-2 rounded-full 
@@ -10,16 +9,21 @@
                shadow-md hover:shadow-lg
                transition-all duration-300"
       >
-        {{ colorMode.preference === 'dark' ? '☀️' : '🌙' }}
+        <span v-html="colorMode.preference === 'dark' ? icon_sunny(24, '#FFB200') : icon_moon(24)"></span>
       </button>
     </div>
-
     <NuxtPage />
+    <CardLoading v-if="loading.getLoading()" />
   </div>
 </template>
 
 <script setup>
+import { icon_moon, icon_sunny } from './utils/icon/icons';
+import CardLoading from './components/common/loadingState/CardLoading.vue';
+import { loadingStore } from './store/loadingState/loading-store';
+import { useColorMode } from '#build/imports';
 const colorMode = useColorMode()
+const loading = loadingStore()
 
 const toggleColorMode = () => {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'

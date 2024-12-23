@@ -1,2 +1,2 @@
-export * from './auth/login';
-export * from './transaction/transaction'
+export * from './auth/login.type';
+export * from './transaction/transaction.type'

@@ -1,26 +1,28 @@
-import { LoginService } from "~/services/auth/login";
-// import { authStorage } from "~/store/auth/store";
+import { LoginService } from "~/services/auth/login.service";
+import { TransactionService } from "~/services/transaction/transaction.service";
+import type { GraphQLClient } from 'graphql-request';
+import { loadingStore } from "~/store/loadingState/loading-store";
 
 interface IHttp {
-//   user: UserService;
   login: LoginService;
+  transaction: TransactionService;
 }
 
-export default defineNuxtPlugin(() => {
-  const config = useRuntimeConfig();
-  const fetcher = $fetch.create({
-    baseURL: config.public.apiBase,
-    // onRequest({ request, options }) {
-    //   const authHeader = {
-    //     Authorization: "Bearer " + authStorage().token,
-    //   };
-    //   options.headers = Object.assign(authHeader, options.headers);
-    // },
-  });
+export default defineNuxtPlugin((nuxtApp) => {
+  const graphqlClient = (useNuxtApp().$graphql as Record<string, GraphQLClient>).default;
+  const loading = loadingStore()
+
+  nuxtApp.hook('page:start', () => {
+    loading.setLoading(true)
+  })
+
+  nuxtApp.hook('page:finish', () => {
+    loading.setLoading(false)
+  })
 
   const httpServices: IHttp = {
-    // user: new UserService(fetcher),
-    login: new LoginService(fetcher),
+    login: new LoginService(graphqlClient),
+    transaction: new TransactionService(graphqlClient)
   };
 
   return {

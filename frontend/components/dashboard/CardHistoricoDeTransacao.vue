@@ -61,6 +61,7 @@ import MazTableCell from 'maz-ui/components/MazTableCell'
 import MazBtn from 'maz-ui/components/MazBtn'
 import type { ITransaction } from '~/types';
 import { icon_trash } from '~/utils/icon/icons';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
   transacoes: ITransaction[]
@@ -68,8 +69,8 @@ const props = defineProps<{
 const emit = defineEmits(['remove-transaction']);
 
 const transacoes = ref(props.transacoes);
-const excluirTransacao = (id: number) => {
-  emit('remove-transaction', id)
+const excluirTransacao = (transactionIndex: number) => {
+  emit('remove-transaction', transactionIndex)
 }
 
 const filtroTipo = ref<'' | 'entrada' | 'saida'>('')
