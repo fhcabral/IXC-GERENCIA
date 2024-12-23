@@ -23,11 +23,27 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  build: {
+    transpile: ['nuxt-graphql-request'],
+  },
+  graphql: {
+    clients: {
+      default: {
+        endpoint: 'http://localhost:4000',
+        options: {},
+      },
+    },
+    options: {
+      method: 'get',
+    },
+    includeNodeModules: true,
+  },
   modules: [
     '@nuxtjs/tailwindcss',
     "@nuxtjs/color-mode",
     "maz-ui/nuxt",
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    'nuxt-graphql-request',
   ],
   compatibilityDate: "2024-09-20",
 });
