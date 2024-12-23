@@ -67,6 +67,13 @@ const formatCurrency = (valor: number) => {
         currency: 'BRL'
     }).format(valor)
 }
+
+defineExpose({
+    saldoClass,
+    totalEntradas,
+    totalSaidas,
+    saldoAtual
+})
 </script>
 
 <style scoped>

@@ -7,21 +7,21 @@
         <main class="main-content">
             <CardResumo :transacoes="transacoes" />
             <CardCadastroDeTransacao :transacoes="transacoes" />
-            <CardHistoricoDeTransacao :transacoes="transacoes" @remove-transaction="removerTransacao" />
+            <CardHistoricoDeTransacao :transacoes="transacoes" @remove-transaction="deleteTransaction" />
         </main>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useCustomToast } from '~/utils/toasts/toasts';
+import { useCustomToast } from '../utils/toasts/toasts';
 import { useNuxtApp, navigateTo } from '#app';
-import CardSideBar from '~/components/common/sideBar/CardSideBar.vue';
-import CardResumo from '~/components/dashboard/CardResumo.vue';
-import CardCadastroDeTransacao from '~/components/dashboard/CardCadastroDeTransacao.vue';
-import CardHistoricoDeTransacao from '~/components/dashboard/CardHistoricoDeTransacao.vue';
-import { icon_logout } from '~/utils/icon/icons';
-import { useAuthStore } from '~/store/auth/login-store';
+import CardSideBar from '../components/common/sideBar/CardSideBar.vue';
+import CardResumo from '../components/dashboard/CardResumo.vue';
+import CardCadastroDeTransacao from '../components/dashboard/CardCadastroDeTransacao.vue';
+import CardHistoricoDeTransacao from '../components/dashboard/CardHistoricoDeTransacao.vue';
+import { icon_logout } from '../utils/icon/icons';
+import { useAuthStore } from '../store/auth/login-store';
 import type { ITransaction } from '~/types';
 const { $http } = useNuxtApp();
 const { showSuccessToast, showInfoToast } = useCustomToast();
@@ -33,7 +33,7 @@ onMounted(async () => {
     await getHistoryTransaction()
 })
 
-const removerTransacao = (transactionIndex: number) => {
+const deleteTransaction = (transactionIndex: number) => {
     const transacaoParaRemover = transacoes.value[transactionIndex];
     const transactionId = transacaoParaRemover.id;
 
@@ -66,6 +66,12 @@ const getHistoryTransaction = async () => {
     }
 }
 
+defineExpose({
+    getHistoryTransaction,
+    deleteTransaction,
+    transacoes
+})
+
 </script>
 
 <style scoped>
@@ -74,7 +80,7 @@ const getHistoryTransaction = async () => {
 }
 
 .dashboard-container {
-    @apply flex h-screen bg-lightMode-100 dark:bg-darkTheme-200 text-custom-100 dark:text-white;
+    @apply flex h-screen bg-stone-500 dark:bg-stone-500 text-custom-100 dark:text-white;
 }
 
 .main-content {

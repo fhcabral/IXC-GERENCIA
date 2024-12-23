@@ -49,6 +49,7 @@ const { showErrorToast, showSuccessToast, showWarnToast } = useCustomToast();
 
 const colorMode = useColorMode()
 const authStore = useAuthStore()
+const router = useRouter()
 
 
 const values_reactive = computed<ILogin>(() => {
@@ -83,7 +84,7 @@ const login = async () => {
 
   if (request.status) {
     showSuccessToast(request.message)
-    useRouter().push('/Dashboard');
+    router.push("/Dashboard")
   } else {
     showErrorToast(request.message)
   }
