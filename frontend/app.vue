@@ -26,6 +26,6 @@ const colorMode = useColorMode()
 const loading = loadingStore()
 
 const toggleColorMode = () => {
-  colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
+  colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light'
 }
 </script>

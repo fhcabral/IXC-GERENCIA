@@ -1,5 +1,6 @@
 import { useAuthStore } from "~/store/auth/login-store";
 import { loadingStore } from "~/store/loadingState/loading-store";
+import { navigateTo } from "#app";
 
 export default defineNuxtRouteMiddleware(async (to) => {
     const loading = loadingStore()
@@ -19,7 +20,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
         }
 
         if (auth && (to.path === '/' || to.path === '/login')) {
-            return navigateTo('/Dashboard')
+            return navigateTo('/Dashboard', { replace: true })
         }
     } finally {
         loading.setLoading(false)

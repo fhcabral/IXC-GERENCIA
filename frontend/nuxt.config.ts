@@ -1,3 +1,5 @@
+import { defineNuxtConfig } from "nuxt/config";
+
 export default defineNuxtConfig({
   css: [
     '~/assets/css/tailwind.css',
@@ -44,6 +46,7 @@ export default defineNuxtConfig({
     "maz-ui/nuxt",
     '@pinia/nuxt',
     'nuxt-graphql-request',
+    '@nuxt/test-utils/module'
   ],
   compatibilityDate: "2024-09-20",
 });
