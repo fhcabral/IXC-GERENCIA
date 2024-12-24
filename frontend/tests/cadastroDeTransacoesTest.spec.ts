@@ -1,12 +1,46 @@
 
 import { mount } from '@vue/test-utils'
-import { expect, describe, it } from 'vitest'
+import { expect, describe, it, vi } from 'vitest'
 import CardCadastroDeTransacao from '../components/dashboard/CardCadastroDeTransacao.vue'
+
+vi.mock('../utils/toasts/toasts', () => ({
+  useCustomToast: vi.fn(() => ({
+    showWarnToast: vi.fn(),
+    showSuccessToast: vi.fn(),
+    showErrorToast: vi.fn(),
+    showInfoToast: vi.fn(),
+  })),
+}));
+
+vi.mock('../store/auth/login-store')
+
+vi.mock('nuxt/app', () => ({
+  useNuxtApp: vi.fn(() => ({
+    $http: {
+      transaction: {
+        createTransaction: vi.fn().mockResolvedValue({
+          id: 'transaction123',
+          descricao: 'Salário',
+          valor: 100,
+          data: '2023-06-15',
+          tipo: 'entrada'
+        })
+      }
+    }
+  })),
+  defineNuxtPlugin: vi.fn(),
+}));
 
 describe('CardCadastroDeTransacao', () => {
 
   it('valida campos obrigatórios', async () => {
-    const wrapper = mount(CardCadastroDeTransacao)
+    const wrapper = mount(CardCadastroDeTransacao, {
+      props: {
+        transacoes: []
+      },
+      global: {
+      }
+    })
 
     const validacao = wrapper.vm.validarTransacao({
       descricao: '',
@@ -18,99 +52,84 @@ describe('CardCadastroDeTransacao', () => {
   })
 
   it('formata valor corretamente', async () => {
-    const wrapper = mount(CardCadastroDeTransacao)
+    const wrapper = mount(CardCadastroDeTransacao, {
+      props: {
+        transacoes: []
+      },
+      global: {
+      }
+    })
 
-    const input = wrapper.find('input[type="text"][inputmode="numeric"]')
-    await input.setValue('10000')
-
-    expect(wrapper.vm.valorFormatado).toContain('100,00')
+    const inputElement = document.createElement('input');
+    inputElement.value = '10000';
+    const event = new Event('input');
+    Object.defineProperty(event, 'target', { value: inputElement });
+    wrapper.vm.formatarValor(event)
+    const valorEsperado = 'R$ 100,00'.replace(/\s/g, ' ');
+    const valorReal = wrapper.vm.valorFormatado.replace(/\u00A0/g, ' ');
+    expect(valorReal).toBe(valorEsperado)
     expect(wrapper.vm.novaTransacao.valor).toBe(100)
   })
 
-//   it('abre modal de confirmação com campos válidos', async () => {
-//     const wrapper = mount(CardCadastroDeTransacao, {
-//         global: {
-//           plugins: []
-//         }
-//       })
-    
-//       // Seleciona o tipo de transação (para MazSelect)
-//       const mazSelect = wrapper.findComponent({ name: 'MazSelect' })
-//       await mazSelect.vm.$emit('update:modelValue', 'entrada')
-    
-//       // Preenche data
-//       const dataInput = wrapper.find('input[type="date"]')
-//       await dataInput.setValue('2023-06-15')
-    
-//       // Preenche descrição
-//       const descricaoInput = wrapper.find('input[placeholder="Digite aqui sua descrição"]')
-//       await descricaoInput.setValue('Salário')
-    
-//       // Preenche valor
-//       const valorInput = wrapper.find('input[placeholder="R$ 0,00"]')
-//       await valorInput.setValue('10000') // Simula digitação
-//       await valorInput.trigger('input') // Dispara evento de input para formatação
-    
-//       // Verifica se os valores foram preenchidos corretamente
-//       expect(wrapper.vm.transactionType).toBe('entrada')
-//       expect(wrapper.vm.novaTransacao.data).toBe('2023-06-15')
-//       expect(wrapper.vm.novaTransacao.descricao).toBe('Salário')
-//       expect(wrapper.vm.valorFormatado).toContain('100,00')
-//   })
+  it('abre modal de confirmação com campos válidos', async () => {
+    const wrapper = mount(CardCadastroDeTransacao, {
+      props: {
+        transacoes: []
+      },
+      global: {
+      }
+    })
 
-//   it('adiciona transação com sucesso', async () => {
-//     const mockCreateTransaction = vi.fn().mockResolvedValue({
-//       id: 'transaction123',
-//       descricao: 'Salário',
-//       valor: 100,
-//       data: '2023-06-15',
-//       tipo: 'entrada'
-//     })
+    const mazSelect = wrapper.findComponent({ name: 'MazSelect' })
+    await mazSelect.vm.$emit('update:modelValue', 'entrada')
 
-//     const wrapper = mount(CardCadastroDeTransacao, {
-//       global: {
-//         plugins: [],
-//         provide: {
-//           $http: {
-//             transaction: {
-//               createTransaction: mockCreateTransaction
-//             }
-//           }
-//         }
-//       }
-//     })
+    const dataInput = wrapper.find('input[type="date"]')
+    await dataInput.setValue('2023-06-15')
 
-//     wrapper.vm.novaTransacao.descricao = 'Salário'
-//     wrapper.vm.novaTransacao.valor = 100
-//     wrapper.vm.novaTransacao.data = '2023-06-15'
-//     wrapper.vm.transactionType = 'entrada'
+    const descricaoInput = wrapper.find('input[placeholder="Digite aqui sua descrição"]')
+    await descricaoInput.setValue('Salário')
 
-//     // Chama método de adição de transação
-//     await wrapper.vm.adicionarTransacao(true)
+    const valorInput = wrapper.find('input[placeholder="R$ 0,00"]')
+    await valorInput.setValue('10000')
+    await valorInput.trigger('input')
 
-//     expect(mockCreateTransaction).toHaveBeenCalled()
-//     expect(wrapper.vm.transacoes.length).toBe(1)
-//     expect(wrapper.vm.showConfirmModal).toBe(false)
-//   })
+    expect(wrapper.vm.transactionType).toBe('entrada')
+    expect(wrapper.vm.novaTransacao.data).toBe('2023-06-15')
+    expect(wrapper.vm.novaTransacao.descricao).toBe('Salário')
+    expect(wrapper.vm.valorFormatado).toContain('100,00')
+  })
 
-//   it('reseta formulário após adicionar transação', async () => {
-//     const wrapper = mount(CardCadastroDeTransacao, {
-//       global: {
-//         plugins: []
-//       }
-//     })
+  it('adiciona transação com sucesso', async () => {
+    const wrapper = mount(CardCadastroDeTransacao, {
+      props: {
+        transacoes: []
+      },
+      global: {
+        plugins: [],
+      }
+    })
+  
+    await wrapper.vm.adicionarTransacao(true)
+    expect(wrapper.vm.transacoes.length).toBe(1);
+    expect(wrapper.vm.transacoes[0].descricao).toBe('Salário');
+    expect(wrapper.vm.showConfirmModal).toBe(false);
+  })
 
-//     // Preenche campos
-//     wrapper.vm.novaTransacao.descricao = 'Salário'
-//     wrapper.vm.novaTransacao.valor = 100
-//     wrapper.vm.novaTransacao.data = '2023-06-15'
-//     wrapper.vm.transactionType = 'entrada'
+    it('reseta formulário após adicionar transação', async () => {
+      const wrapper = mount(CardCadastroDeTransacao, {
+        global: {
+          plugins: []
+        }
+      })
 
-//     // Reseta formulário
-//     wrapper.vm.resetFormulario()
+      wrapper.vm.novaTransacao.descricao = 'Salário'
+      wrapper.vm.novaTransacao.valor = 100
+      wrapper.vm.novaTransacao.data = '2023-06-15'
+      wrapper.vm.transactionType = 'entrada'
+      wrapper.vm.resetFormulario()
 
-//     expect(wrapper.vm.novaTransacao.descricao).toBe('')
-//     expect(wrapper.vm.novaTransacao.valor).toBe(0)
-//     expect(wrapper.vm.transactionType).toBe(null)
-//   })
+      expect(wrapper.vm.novaTransacao.descricao).toBe('')
+      expect(wrapper.vm.novaTransacao.valor).toBe(0)
+      expect(wrapper.vm.transactionType).toBe(null)
+    })
 })

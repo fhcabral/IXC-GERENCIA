@@ -1,14 +1,17 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(),
+    AutoImport({imports: ['vue','vitest','pinia']}),
+  ],
   test: {
-    
-    environment: 'jsdom',
+    environment: 'happy-dom',
     globals: true,
     include: ['./tests/**/*.{test,spec}.{js,ts,vue}'],
+    setupFiles: ['./vitest.setup.ts'],
     css: {
       include: [/\.css$/, /maz-ui/],
     },
@@ -22,21 +25,14 @@ export default defineConfig({
         /#internal/
       ],
     },
-    alias: {
-      '#build/nuxt.config.mjs': path.resolve(__dirname, './nuxt.config.ts'),
-      '#imports': path.resolve(__dirname, './node_modules/nuxt/dist/app/imports'),
-      '#app': path.resolve(__dirname, './node_modules/nuxt/dist/app/nuxt.js'),
-      '#internal/nuxt/paths': path.resolve(__dirname, './node_modules/nuxt/dist/core/runtime/nitro/paths'),
-      '#internal/nitro': path.resolve(__dirname, './node_modules/nuxt/dist/core/runtime/nitro/paths')
-    }
   },
   resolve: {
     alias: {
-      '#build/nuxt.config.mjs': path.resolve(__dirname, './nuxt.config.ts'),
-      '#imports': path.resolve(__dirname, './node_modules/nuxt/dist/app/imports'),
+      '~/': path.resolve(__dirname, './'),
+      '@/': path.resolve(__dirname, './'),
       '#app': path.resolve(__dirname, './node_modules/nuxt/dist/app/nuxt.js'),
-      '#internal/nuxt/paths': path.resolve(__dirname, './node_modules/nuxt/dist/core/runtime/nitro/paths'),
-      '#internal/nitro': path.resolve(__dirname, './node_modules/nuxt/dist/core/runtime/nitro/paths'),
+      '#build/nuxt.config.mjs': path.resolve(__dirname, './nuxt.config.ts'),
+      '#internal/': path.resolve(__dirname, './.nuxt'),
     }
   },
   css: {
