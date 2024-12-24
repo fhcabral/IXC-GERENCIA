@@ -4,61 +4,56 @@
       Histórico de Transações
     </h2>
     <div class="table-controls">
-      <MazSelect
-      v-model="filtroTipo"
-      label="Tipo de Transação"
-      :options="[
+      <MazSelect v-model="filtroTipo" label="Tipo de Transação" :options="[
         { value: '', label: 'Todos' },
         { value: 'entrada', label: 'Entradas' },
         { value: 'saida', label: 'Saídas' }
-      ]"
-      color="primary"
-    />
-    
-    <MazSelect
-      v-model="ordenacao"
-      label="Ordenar por"
-      :options="[
+      ]" color="primary" />
+
+      <MazSelect v-model="ordenacao" label="Ordenar por" :options="[
         { value: 'data', label: 'Data' },
         { value: 'valor', label: 'Valor' },
         { value: 'descricao', label: 'Descrição' }
-      ]"
-      color="primary"
-    />
+      ]" color="primary" />
     </div>
 
-    <MazTable size="lg" 
-    :headers="['ID', 'DESCRIÇÃO', 'VALOR', 'DATA', 'AÇÕES']"
-    :translations="{noResults: 'Nenhum resultado encontrado :('}"
-    :loading="!transacoes.length"
-    >
-      <MazTableRow v-for="(transacao, index) in transacoesFiltradas" :key="index" class="custom-maz-table-row">
-        <MazTableCell>
-          {{ transacao.id }}
-        </MazTableCell>
-        <MazTableCell>
-          {{ transacao.descricao }}
-        </MazTableCell>
-        <MazTableCell :class="transacao.tipo === 'entrada' ? 'text-green-500' : 'text-red-500'">
-          {{ formatCurrency(transacao.valor, transacao.tipo) }}
-        </MazTableCell>
-        <MazTableCell>
-          {{ formatDate(transacao.data) }}
-        </MazTableCell>
-        <MazTableCell class="flex items-center justify-center">
-          <MazBtn @click="excluirTransacao(index)" class="delete-button" color="danger" rounded-size="full">
-            <span v-html="icon_trash(16, '#FFFFFF')"></span>
-          </MazBtn>
-        </MazTableCell>
-      </MazTableRow>
+    <MazTable v-if="transacoesFiltradas.length > 0" size="lg" pagination hoverable :headers="[
+      { label: 'ID', key: 'id', align: 'center' },
+      { label: 'DESCRIÇÃO', key: 'descricao', align: 'center' },
+      { label: 'VALOR', key: 'valor', align: 'center' },
+      { label: 'DATA', key: 'data', align: 'center' },
+      { label: 'AÇÕES', key: 'acoes', align: 'center', sortable: false }
+    ]" :rows="transacoesFiltradas"
+      :translations="{ noResults: 'Nenhum resultado encontrado :(', paginationRowsPerPage: 'Linhas por página', paginationOf: 'de'}">
+      <template #cell-id="{ value }">
+        {{ value }}
+      </template>
+
+      <template #cell-descricao="{ value }">
+        {{ value }}
+      </template>
+
+      <template #cell-valor="{ row }">
+        <span :class="row.tipo === 'entrada' ? 'text-green-500' : 'text-red-500'">
+          {{ formatCurrency(row.valor, row.tipo) }}
+        </span>
+      </template>
+
+      <template #cell-data="{ value }">
+        {{ formatDate(value) }}
+      </template>
+
+      <template #cell-acoes="{ row }">
+        <MazBtn @click="excluirTransacao(row.id)" class="delete-button" color="danger" rounded-size="full">
+          <span v-html="icon_trash(16, '#FFFFFF')"></span>
+        </MazBtn>
+      </template>
     </MazTable>
   </section>
 </template>
 
 <script setup lang="ts">
 import MazTable from 'maz-ui/components/MazTable'
-import MazTableRow from 'maz-ui/components/MazTableRow'
-import MazTableCell from 'maz-ui/components/MazTableCell'
 import MazBtn from 'maz-ui/components/MazBtn'
 import type { ITransaction } from '~/types';
 import { icon_trash } from '../../utils/icon/icons';
@@ -70,7 +65,7 @@ const props = defineProps<{
 const emit = defineEmits(['remove-transaction']);
 
 const transacoes = ref(props.transacoes);
-const excluirTransacao = (transactionIndex: number) => {
+const excluirTransacao = (transactionIndex: string) => {
   emit('remove-transaction', transactionIndex)
 }
 

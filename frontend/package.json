@@ -5,40 +5,43 @@
   "scripts": {
     "build": "nuxt build",
     "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage",
+    "coverage": "vitest run --coverage",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/test-utils": "^3.15.1",
     "@nuxtjs/color-mode": "^3.5.2",
     "@pinia/nuxt": "^0.9.0",
     "dotenv": "^16.4.7",
     "graphql": "^16.10.0",
     "happy-dom": "^15.11.7",
+    "install": "^0.13.0",
     "maz-ui": "^3.50.1",
+    "npm": "^11.0.0",
     "nuxt": "^3.14.1592",
     "nuxt-graphql-request": "^8.1.1",
-    "ofetch": "^1.4.1",
     "pinia": "^2.3.0",
+    "ts-node": "^10.9.2",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@nuxtjs/tailwindcss": "^6.12.2",
+    "@types/node": "^22.10.2",
+    "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.17.0",
     "eslint-plugin-vue": "^9.32.0",
     "globals": "^15.14.0",
-    "jsdom": "^25.0.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "tslib": "^2.8.1",
     "typescript-eslint": "^8.18.1",
+    "unplugin-auto-import": "^0.19.0",
     "vitest": "^2.1.8"
   }
 }

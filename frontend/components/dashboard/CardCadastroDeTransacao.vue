@@ -143,7 +143,7 @@ const validarTransacao = (transacao: Omit<ITransaction, 'id' | 'tipo'>): boolean
 
 const formatarValor = (event: Event) => {
     const input = event.target as HTMLInputElement
-    let valor = input.value.replace(/[^\d]/g, '') // Remove tudo que não for dígito
+    let valor = input.value.replace(/[^\d]/g, '')
 
     if (valor === '') {
         valorFormatado.value = ''
@@ -163,7 +163,9 @@ const formatarValor = (event: Event) => {
 defineExpose({
     adicionarTransacao,
     validarTransacao,
+    confirmTransation,
     valorFormatado,
+    formatarValor,
     novaTransacao,
     transactionType,
     showConfirmModal,

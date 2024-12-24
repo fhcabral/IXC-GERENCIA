@@ -13,17 +13,13 @@
       </button>
     </div>
     <NuxtPage />
-    <CardLoading v-if="loading.getLoading()" />
   </div>
 </template>
 
 <script setup>
 import { icon_moon, icon_sunny } from './utils/icon/icons';
-import CardLoading from './components/common/loadingState/CardLoading.vue';
-import { loadingStore } from './store/loadingState/loading-store';
 import { useColorMode } from '#build/imports';
 const colorMode = useColorMode()
-const loading = loadingStore()
 
 const toggleColorMode = () => {
   colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light'

@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useCustomToast } from '../utils/toasts/toasts';
-import { useNuxtApp, navigateTo } from '#app';
+import { useNuxtApp, navigateTo } from 'nuxt/app';
 import CardSideBar from '../components/common/sideBar/CardSideBar.vue';
 import CardResumo from '../components/dashboard/CardResumo.vue';
 import CardCadastroDeTransacao from '../components/dashboard/CardCadastroDeTransacao.vue';
@@ -33,21 +33,19 @@ onMounted(async () => {
     await getHistoryTransaction()
 })
 
-const deleteTransaction = (transactionIndex: number) => {
-    const transacaoParaRemover = transacoes.value[transactionIndex];
-    const transactionId = transacaoParaRemover.id;
-
-    $http.transaction.deleteTransactionById(transactionId)
-        .then(() => {
-            transacoes.value.splice(transactionIndex, 1);
-            showSuccessToast('Transação deletada com sucesso!');
-        })
+const deleteTransaction = async (transactionId: string) => {
+    await $http.transaction.deleteTransactionById(transactionId)
+    const transactionIndex = transacoes.value.findIndex(transaction => transaction.id === transactionId);
+    if (transactionIndex !== -1) {
+        transacoes.value.splice(transactionIndex, 1);
+        showSuccessToast('Transação deletada com sucesso!');
+    }
 }
 
 const realizarLogout = () => {
     authStore.logout();
     showInfoToast('Sessão encerrada!')
-    navigateTo('/');
+    navigateTo('/Login');
 }
 
 const getHistoryTransaction = async () => {

@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import CardHistoricoDeTransacao from '../components/dashboard/CardHistoricoDeTransacao.vue'
 import type { ITransaction } from '~/types'
-import { config } from '@vue/test-utils'
 
 const mockTransacoes: ITransaction[] = [
   {
@@ -28,14 +27,6 @@ const mockTransacoes: ITransaction[] = [
   }
 ]
 
-config.global.stubs = {
-    'maz-select': true,
-    'maz-table': true,
-    'maz-table-row': true,
-    'maz-table-cell': true,
-    'maz-btn': true
-  }
-
 describe('CardHistoricoDeTransacao', () => {
   it('renderiza lista de transações corretamente', () => {
     const wrapper = mount(CardHistoricoDeTransacao, {
@@ -55,9 +46,9 @@ describe('CardHistoricoDeTransacao', () => {
       }
     })
 
-    const entradaTransacoes = wrapper.vm.transacoesFiltradas.filter(item => item.tipo === "entrada")
+    const entradaTransacoes = wrapper.vm.transacoesFiltradas.filter((item: ITransaction) => item.tipo === "entrada")
     expect(entradaTransacoes.length).toBe(2)
-    expect(entradaTransacoes.every(t => t.tipo === 'entrada')).toBe(true)
+    expect(entradaTransacoes.every((t: ITransaction) => t.tipo === 'entrada')).toBe(true)
   })
 
   it('ordena transações por valor corretamente', async () => {
