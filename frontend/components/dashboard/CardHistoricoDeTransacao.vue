@@ -17,7 +17,7 @@
       ]" color="primary" />
     </div>
 
-    <MazTable v-if="transacoesFiltradas.length > 0" size="lg" pagination hoverable :headers="[
+    <MazTable size="lg" :key="tableKey" pagination hoverable :headers="[
       { label: 'ID', key: 'id', align: 'center' },
       { label: 'DESCRIÇÃO', key: 'descricao', align: 'center' },
       { label: 'VALOR', key: 'valor', align: 'center' },
@@ -64,9 +64,13 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['remove-transaction']);
 
-const transacoes = ref(props.transacoes);
+const transacoes = ref([...props.transacoes]);
+const tableKey = ref(0);
+
 const excluirTransacao = (transactionIndex: string) => {
   emit('remove-transaction', transactionIndex)
+  transacoes.value = transacoes.value.filter(t => t.id !== transactionIndex);
+  tableKey.value++;
 }
 
 const filtroTipo = ref<'' | 'entrada' | 'saida'>('')
@@ -104,6 +108,12 @@ const transacoesFiltradas = computed(() => {
     }
   }) as ITransaction[]
 })
+
+watch(() => props.transacoes, (newTransacoes) => {
+  transacoes.value = [...newTransacoes];
+  tableKey.value++;
+}, { deep: true });
+
 
 defineExpose({
   ordenacao,
