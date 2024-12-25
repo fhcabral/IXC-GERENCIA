@@ -117,6 +117,9 @@ describe('CardCadastroDeTransacao', () => {
 
     it('reseta formulário após adicionar transação', async () => {
       const wrapper = mount(CardCadastroDeTransacao, {
+        props: {
+          transacoes: []
+        },
         global: {
           plugins: []
         }
